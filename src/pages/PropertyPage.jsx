@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import propertiesData from "../data/properties.json";
+import ImageGallery from "../components/ImageGallery";
 
 function PropertyPage() {
   const { id } = useParams();
@@ -36,13 +37,10 @@ function PropertyPage() {
 
       <section className="detailsHeader">
         <div className="detailsImageWrap">
-          {picture ? (
-            <img
-              className="detailsImage"
-              src={heroSrc}
-              alt={`${type} in ${location}`}
-            />
-          ) : null}
+          <ImageGallery
+            images={property.images ?? [property.picture].filter(Boolean)}
+            altText={`${type} in ${location}`}
+          />
         </div>
 
         <div className="detailsSummary">
