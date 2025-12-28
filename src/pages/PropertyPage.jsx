@@ -19,10 +19,14 @@ function PropertyPage() {
   const { type, price, location, bedrooms, tenure, description, picture } =
     property;
 
+  // Split long description safely (no dangerouslySetInnerHTML)
   const safeParagraphs = String(description)
     .split(/<br\s*\/?>/i)
     .map((s) => s.trim())
     .filter(Boolean);
+
+  // Make image path work on nested routes + GitHub Pages (uses Vite base URL)
+  const heroSrc = picture ? `${import.meta.env.BASE_URL}${picture}` : "";
 
   return (
     <main className="page">
@@ -35,7 +39,7 @@ function PropertyPage() {
           {picture ? (
             <img
               className="detailsImage"
-              src={picture}
+              src={heroSrc}
               alt={`${type} in ${location}`}
             />
           ) : null}
