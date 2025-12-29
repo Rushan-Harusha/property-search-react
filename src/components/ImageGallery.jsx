@@ -1,14 +1,19 @@
 import { useMemo, useState } from "react";
 
 function ImageGallery({ images = [], altText = "Property photo" }) {
+  // Make sure we only keep valid image strings
   const safeImages = useMemo(
     () => (Array.isArray(images) ? images.filter(Boolean) : []),
     [images]
   );
 
+  // activeIndex = which image is currently selected (0..n-1)
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // isModalOpen = controls the "View all photos" lightbox
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // BASE_URL makes image paths work on nested routes + GitHub Pages
   const activeSrc = safeImages[activeIndex]
     ? `${import.meta.env.BASE_URL}${safeImages[activeIndex]}`
     : "";
@@ -20,6 +25,20 @@ function ImageGallery({ images = [], altText = "Property photo" }) {
 
   function closeModal() {
     setIsModalOpen(false);
+  }
+
+  // Wrap-around navigation (going back from first goes to last)
+  function prev() {
+    setActiveIndex((prevIdx) =>
+      prevIdx === 0 ? safeImages.length - 1 : prevIdx - 1
+    );
+  }
+
+  // Wrap-around navigation (going next from last goes to first)
+  function next() {
+    setActiveIndex((prevIdx) =>
+      prevIdx === safeImages.length - 1 ? 0 : prevIdx + 1
+    );
   }
 
   return (
@@ -40,6 +59,7 @@ function ImageGallery({ images = [], altText = "Property photo" }) {
         )}
       </div>
 
+      {/* Thumbnails: clicking one changes the main image */}
       <div className="galleryThumbs">
         {safeImages.map((img, idx) => {
           const thumbSrc = `${import.meta.env.BASE_URL}${img}`;
@@ -53,12 +73,14 @@ function ImageGallery({ images = [], altText = "Property photo" }) {
               onClick={() => setActiveIndex(idx)}
               aria-label={`View photo ${idx + 1}`}
             >
+              {/* alt is empty because the main image already has descriptive alt */}
               <img className="galleryThumbImg" src={thumbSrc} alt="" />
             </button>
           );
         })}
       </div>
 
+      {/* Modal: click outside to close, inside stops propagation */}
       {isModalOpen ? (
         <div className="modalOverlay" onClick={closeModal} role="presentation">
           <div
@@ -77,29 +99,13 @@ function ImageGallery({ images = [], altText = "Property photo" }) {
             </div>
 
             <div className="modalBody">
-              <button
-                type="button"
-                className="modalNav"
-                onClick={() =>
-                  setActiveIndex((prev) =>
-                    prev === 0 ? safeImages.length - 1 : prev - 1
-                  )
-                }
-              >
+              <button type="button" className="modalNav" onClick={prev}>
                 ‹
               </button>
 
               <img className="modalImg" src={activeSrc} alt={altText} />
 
-              <button
-                type="button"
-                className="modalNav"
-                onClick={() =>
-                  setActiveIndex((prev) =>
-                    prev === safeImages.length - 1 ? 0 : prev + 1
-                  )
-                }
-              >
+              <button type="button" className="modalNav" onClick={next}>
                 ›
               </button>
             </div>

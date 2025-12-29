@@ -4,6 +4,8 @@ import ImageGallery from "../components/ImageGallery";
 
 function PropertyPage() {
   const { id } = useParams();
+
+  // Find the property matching the route param
   const property = propertiesData.properties.find((p) => p.id === id);
 
   if (!property) {
@@ -17,17 +19,14 @@ function PropertyPage() {
     );
   }
 
-  const { type, price, location, bedrooms, tenure, description, picture } =
-    property;
+  const { type, price, location, bedrooms, tenure, description } = property;
 
-  // Split long description safely (no dangerouslySetInnerHTML)
+  // Split description safely (prevents XSS: we do NOT render raw HTML)
+  // Works with text that contains <br> tags from the JSON
   const safeParagraphs = String(description)
     .split(/<br\s*\/?>/i)
     .map((s) => s.trim())
     .filter(Boolean);
-
-  // Make image path work on nested routes + GitHub Pages (uses Vite base URL)
-  const heroSrc = picture ? `${import.meta.env.BASE_URL}${picture}` : "";
 
   return (
     <main className="page">
@@ -37,6 +36,7 @@ function PropertyPage() {
 
       <section className="detailsHeader">
         <div className="detailsImageWrap">
+          {/* Use images array for the gallery; fallback to picture if needed */}
           <ImageGallery
             images={property.images ?? [property.picture].filter(Boolean)}
             altText={`${type} in ${location}`}
@@ -50,6 +50,7 @@ function PropertyPage() {
           </div>
           <div className="detailsLocation">{location}</div>
 
+          {/* Short preview on the side (full text will go in Tabs later) */}
           <div className="detailsShort">
             {safeParagraphs.slice(0, 2).map((p, idx) => (
               <p key={idx}>{p}</p>
