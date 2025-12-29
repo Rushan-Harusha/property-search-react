@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import propertiesData from "../data/properties.json";
 import ImageGallery from "../components/ImageGallery";
+import PropertyTabs from "../components/PropertyTabs";
 
 function PropertyPage() {
   const { id } = useParams();
@@ -58,6 +59,13 @@ function PropertyPage() {
           </div>
         </div>
       </section>
+      {/* Tabs: long description, floor plan, and map */}
+      <PropertyTabs
+        descriptionParagraphs={safeParagraphs}
+        floorPlan={property.floorPlan}
+        // Use mapQuery if present, otherwise fall back to location text
+        mapQuery={property.mapQuery || property.location}
+      />
     </main>
   );
 }
