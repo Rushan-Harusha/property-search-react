@@ -103,6 +103,11 @@ body {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: grab;
+}
+
+.card:active {
+  cursor: grabbing;
 }
 
 /* Make sure the fav button can position itself inside the image area */
@@ -462,4 +467,22 @@ body {
 
 .favBtn.isFav {
   background: rgba(45, 191, 156, 0.9);
+}
+
+/* Drag & drop target highlight (favourites sidebar) */
+.favDropZone {
+  outline: 2px dashed transparent;
+  outline-offset: 4px;
+}
+
+.favDropZone.isDragOver {
+  outline-color: #2dbf9c;
+  background: #f3fffb; /* subtle drop target feel */
+}
+
+/* Keyboard focus styles for accessibility */
+.favIconBtn:focus-visible,
+.favBtn:focus-visible {
+  outline: 2px solid #2dbf9c;
+  outline-offset: 2px;
 }

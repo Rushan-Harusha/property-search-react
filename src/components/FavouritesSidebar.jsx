@@ -1,16 +1,44 @@
 import { Link } from "react-router-dom";
 import { useFavourites } from "../context/FavouritesContext";
+import { useState } from "react";
 
 function FavouritesSidebar({ propertiesById }) {
-  const { favouriteIds, removeFavourite, clearFavourites } = useFavourites();
+  const { favouriteIds, addFavourite, removeFavourite, clearFavourites } =
+    useFavourites();
+
+  // UI state: highlight sidebar when a draggable item is over it
+  const [isDragOver, setIsDragOver] = useState(false);
 
   // Convert favourite IDs -> real property objects
   const favourites = favouriteIds
     .map((id) => propertiesById[id])
     .filter(Boolean);
 
+  function handleDragOver(e) {
+    e.preventDefault(); // required to allow dropping
+    setIsDragOver(true);
+  }
+
+  function handleDragLeave() {
+    setIsDragOver(false);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    // We store the property id as text/plain during dragStart
+    const droppedId = e.dataTransfer.getData("text/plain");
+    if (droppedId) addFavourite(droppedId); // duplicates prevented by context
+  }
+
   return (
-    <aside className="panel">
+    <aside
+      className={`panel favDropZone ${isDragOver ? "isDragOver" : ""}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <div className="favHeader">
         <h2 className="panelTitle" style={{ margin: 0 }}>
           Favourites ({favourites.length})
@@ -29,7 +57,7 @@ function FavouritesSidebar({ propertiesById }) {
 
       {favourites.length === 0 ? (
         <p className="mutedText" style={{ marginTop: 10 }}>
-          No favourites yet.
+          Drag a property here or press ♡.
         </p>
       ) : (
         <div className="favList">

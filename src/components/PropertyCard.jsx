@@ -28,7 +28,14 @@ function PropertyCard({ property }) {
 
   return (
     <Link to={`/property/${id}`} className="cardLink">
-      <article className="card">
+      <article
+        className="card"
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData("text/plain", id); // send the property id
+          e.dataTransfer.effectAllowed = "copy";
+        }}
+      >
         <div className="cardImageWrap">
           {picture ? (
             <img
