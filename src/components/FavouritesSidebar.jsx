@@ -46,11 +46,13 @@ function FavouritesSidebar({ propertiesById }) {
               </Link>
 
               <button
-                className="btn btnGhost favDelete"
                 type="button"
+                className="favIconBtn"
                 onClick={() => removeFavourite(p.id)}
+                aria-label="Remove from favourites"
+                title="Remove"
               >
-                Delete
+                ✕
               </button>
             </div>
           ))}

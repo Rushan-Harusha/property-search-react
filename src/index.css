@@ -105,9 +105,11 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* Make sure the fav button can position itself inside the image area */
 .cardImageWrap {
   height: 160px;
   background: #ddd;
+  position: relative;
 }
 
 .cardImage {
@@ -396,12 +398,14 @@ body {
   border: 1px solid #eee;
   border-radius: 10px;
   padding: 10px;
+  position: relative; /* needed for the ✕ button */
 }
 
 .favLink {
   text-decoration: none;
   color: inherit;
   display: block;
+  padding-right: 44px; /* leave space so text doesn't sit under the ✕ */
 }
 
 .favPrice {
@@ -418,7 +422,44 @@ body {
   margin-top: 4px;
 }
 
-.favDelete {
-  margin-top: 10px;
-  width: 100%;
+/* ✕ remove button on favourites */
+.favIconBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.favIconBtn:hover {
+  border-color: #bbb;
+}
+
+/* Favourite button on cards */
+.favBtn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.favBtn.isFav {
+  background: rgba(45, 191, 156, 0.9);
 }
