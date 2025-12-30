@@ -2,9 +2,13 @@ import { useMemo, useState } from "react";
 import propertiesData from "../data/properties.json";
 import PropertyCard from "../components/PropertyCard";
 import { filterProperties } from "../utils/filterProperties";
+import FavouritesSidebar from "../components/FavouritesSidebar";
 
 function SearchPage() {
   const properties = propertiesData.properties;
+
+  // Quick lookup by id for favourites sidebar
+  const propertiesById = Object.fromEntries(properties.map((p) => [p.id, p]));
 
   const [formState, setFormState] = useState({
     type: "",
@@ -149,15 +153,23 @@ function SearchPage() {
         </div>
       </form>
 
-      {!hasSearched ? (
-        <p className="mutedText">No results yet. Use the search form above.</p>
-      ) : (
-        <section className="resultsGrid">
-          {filtered.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </section>
-      )}
+      <div className="searchLayout">
+        <div>
+          {!hasSearched ? (
+            <p className="mutedText">
+              No results yet. Use the search form above.
+            </p>
+          ) : (
+            <section className="resultsGrid">
+              {filtered.map((p) => (
+                <PropertyCard key={p.id} property={p} />
+              ))}
+            </section>
+          )}
+        </div>
+
+        <FavouritesSidebar propertiesById={propertiesById} />
+      </div>
     </main>
   );
 }
