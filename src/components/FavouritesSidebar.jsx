@@ -6,38 +6,58 @@ function FavouritesSidebar({ propertiesById }) {
   const { favouriteIds, addFavourite, removeFavourite, clearFavourites } =
     useFavourites();
 
-  // UI state: highlight sidebar when a draggable item is over it
-  const [isDragOver, setIsDragOver] = useState(false);
+  // Highlight when dragging over the ADD zone
+  const [isAddDragOver, setIsAddDragOver] = useState(false);
+  // Highlight when dragging over the REMOVE zone
+  const [isRemoveDragOver, setIsRemoveDragOver] = useState(false);
 
-  // Convert favourite IDs -> real property objects
   const favourites = favouriteIds
     .map((id) => propertiesById[id])
     .filter(Boolean);
 
-  function handleDragOver(e) {
-    e.preventDefault(); // required to allow dropping
-    setIsDragOver(true);
+  // ----- ADD (drop into sidebar) -----
+  function handleAddDragOver(e) {
+    e.preventDefault(); // allow drop
+    setIsAddDragOver(true);
   }
-
-  function handleDragLeave() {
-    setIsDragOver(false);
+  function handleAddDragLeave() {
+    setIsAddDragOver(false);
   }
-
-  function handleDrop(e) {
+  function handleAddDrop(e) {
     e.preventDefault();
-    setIsDragOver(false);
+    setIsAddDragOver(false);
 
-    // We store the property id as text/plain during dragStart
     const droppedId = e.dataTransfer.getData("text/plain");
     if (droppedId) addFavourite(droppedId); // duplicates prevented by context
   }
 
+  // ----- REMOVE (drop into remove zone) -----
+  function handleRemoveDragOver(e) {
+    e.preventDefault(); // allow drop
+    e.stopPropagation(); // IMPORTANT: don’t trigger the parent dropzone
+    setIsRemoveDragOver(true);
+  }
+
+  function handleRemoveDragLeave(e) {
+    e.stopPropagation();
+    setIsRemoveDragOver(false);
+  }
+
+  function handleRemoveDrop(e) {
+    e.preventDefault();
+    e.stopPropagation(); // IMPORTANT: stop parent <aside onDrop> from running
+    setIsRemoveDragOver(false);
+
+    const droppedId = e.dataTransfer.getData("text/plain");
+    if (droppedId) removeFavourite(droppedId);
+  }
+
   return (
     <aside
-      className={`panel favDropZone ${isDragOver ? "isDragOver" : ""}`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      className={`panel favDropZone ${isAddDragOver ? "isDragOver" : ""}`}
+      onDragOver={handleAddDragOver}
+      onDragLeave={handleAddDragLeave}
+      onDrop={handleAddDrop}
     >
       <div className="favHeader">
         <h2 className="panelTitle" style={{ margin: 0 }}>
@@ -55,6 +75,16 @@ function FavouritesSidebar({ propertiesById }) {
         </button>
       </div>
 
+      {/* REMOVE ZONE (drag favourites here to remove) */}
+      <div
+        className={`favRemoveZone ${isRemoveDragOver ? "isDragOver" : ""}`}
+        onDragOver={handleRemoveDragOver}
+        onDragLeave={handleRemoveDragLeave}
+        onDrop={handleRemoveDrop}
+      >
+        Drop here to remove
+      </div>
+
       {favourites.length === 0 ? (
         <p className="mutedText" style={{ marginTop: 10 }}>
           Drag a property here or press ♡.
@@ -62,7 +92,16 @@ function FavouritesSidebar({ propertiesById }) {
       ) : (
         <div className="favList">
           {favourites.map((p) => (
-            <div key={p.id} className="favItem">
+            <div
+              key={p.id}
+              className="favItem"
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", p.id); // send id for removal drop zone
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              title="Drag to remove zone"
+            >
               <Link className="favLink" to={`/property/${p.id}`}>
                 <div className="favPrice">
                   £{Number(p.price).toLocaleString()}

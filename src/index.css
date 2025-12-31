@@ -404,6 +404,11 @@ body {
   border-radius: 10px;
   padding: 10px;
   position: relative; /* needed for the ✕ button */
+  cursor: grab;
+}
+
+.favItem:active {
+  cursor: grabbing;
 }
 
 .favLink {
@@ -485,4 +490,22 @@ body {
 .favBtn:focus-visible {
   outline: 2px solid #2dbf9c;
   outline-offset: 2px;
+}
+
+/* Drag-out remove zone */
+.favRemoveZone {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px dashed #ddd;
+  color: #555;
+  font-weight: 700;
+  text-align: center;
+  background: #fafafa;
+}
+
+.favRemoveZone.isDragOver {
+  border-color: #e25555;
+  background: #fff2f2;
+  color: #b53131;
 }
