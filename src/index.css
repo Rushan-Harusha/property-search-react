@@ -509,3 +509,50 @@ body {
   background: #fff2f2;
   color: #b53131;
 }
+
+/* =========================
+   Responsive layout
+   Breakpoint: < iPad landscape (~1024px)
+   ========================= */
+@media (max-width: 1024px) {
+  /* Search page: stack results + favourites */
+  .searchLayout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Property page: stack gallery above summary */
+  .detailsHeader {
+    grid-template-columns: 1fr;
+  }
+
+  /* Thumbnails: fewer per row on smaller screens */
+  .galleryThumbs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Map height slightly smaller on tablets/phones */
+  .mapFrame {
+    height: 340px;
+  }
+}
+
+/* Optional extra: smaller phones */
+@media (max-width: 600px) {
+  .page {
+    padding: 12px;
+  }
+
+  /* Results: cards take full width more often */
+  .resultsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modal: make nav buttons smaller */
+  .modalBody {
+    grid-template-columns: 38px 1fr 38px;
+  }
+
+  .galleryMainImg {
+    height: 280px;
+  }
+}
